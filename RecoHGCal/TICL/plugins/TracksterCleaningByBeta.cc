@@ -42,9 +42,8 @@ TracksterCleaningByBeta::TracksterCleaningByBeta(const edm::ParameterSet& conf, 
       sigmaDR_(conf.getParameter<double>("sigmaDR")),
       zPower_(conf.getParameter<double>("zPower")),
       tPower_(conf.getParameter<double>("tPower")),
-      drPower_(conf.getParameter<double>("drPower")) {
-  (void)iC; // if you don’t actually use it here
-}
+      drPower_(conf.getParameter<double>("drPower")) 
+      {}
 
 void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
                                               std::vector<ticl::Trackster>& outTracksters,
@@ -84,7 +83,7 @@ void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
             const float etaA = ta.barycenter().eta();
             const float phiA = ta.barycenter().phi();
 
-            for (size_t b = a + 1; b < nm; ++b) {             // a<b avoids double counting & self-pairs
+            for (size_t b = a + 1; b < nm; ++b) {             // avoid double counting & self-pairs
                 const auto& tb = in.clue3d[members[b]];
                 const double dR = reco::deltaR(etaA, phiA, tb.barycenter().eta(), tb.barycenter().phi());
                 if (dR <= R0_) sumDR += dR;
@@ -133,7 +132,7 @@ void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
       }
     }
 
-    // Recompute energy from kept members
+    // recompute energy from kept CLUE3D tracksters
     float eNew = 0.f;
     if (mode_ == "drop") {
       for (auto idx : kept) eNew += in.clue3d[idx].raw_energy();
@@ -143,12 +142,11 @@ void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
     }
     setLinkRawEnergy_(cleaned, eNew);
 
-    // Emit cleaned row
     outTracksters.push_back(std::move(cleaned));
     outMap.push_back(std::move(kept));
     outWeights.push_back(std::move(keptW));
 
-    // Optionally emit dropped chunk as its own link
+    // optionally emit dropped trackster as its own link
     if (emitDroppedAsStandalone_ && !dropped.empty()) {
       ticl::Trackster droppedLink = link;
       float eDrop = 0.f;
