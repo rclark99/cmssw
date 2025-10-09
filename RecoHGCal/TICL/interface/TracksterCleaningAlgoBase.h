@@ -22,7 +22,7 @@ public:
     const edm::EventSetup& es;
     const std::vector<ticl::Trackster>& linked;
     const std::vector<ticl::Trackster>& clue3d;
-    const std::vector<std::vector<unsigned int>>& map; // per linked -> CLUE3D idxs
+    const std::vector<std::vector<unsigned int>>& map; // indices of 3D clusters associated to each linkedTrackster
     Inputs(const edm::Event& eV,
            const edm::EventSetup& eS,
            const std::vector<ticl::Trackster>& l,
