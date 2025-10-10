@@ -8,7 +8,7 @@ namespace ticl {
 
 class TracksterCleaningByBeta final : public TracksterCleaningAlgoBase {
 public:
-  TracksterCleaningByBeta(const edm::ParameterSet& ps, edm::ConsumesCollector);
+  TracksterCleaningByBeta(const edm::ParameterSet& conf, edm::ConsumesCollector);
 
   void cleanTracksters(const Inputs& input,
                        std::vector<ticl::Trackster>& outTracksters,
@@ -20,40 +20,39 @@ public:
 
   static void fillPSetDescription(edm::ParameterSetDescription& desc) {
     TracksterCleaningAlgoBase::fillPSetDescription(desc);
-    desc.add<double>("betaContamMin", 1.12); // 90% PU identification efficiency, 17% signal fake rate
+    desc.add<double>("betaContamMin", 1.12);
     desc.add<double>("R0", 0.10);
     desc.add<bool>("useRawEnergy", true);
     desc.add<double>("epsE", 1e-6);
     desc.add<double>("epsDR", 1e-6);
-    desc.add<std::string>("reweightMode", "drop");           // "drop" or "weight"
+    desc.add<bool>("weightMode", true);
     desc.add<bool>("emitDroppedAsStandalone", false);
-    desc.add<double>("zAbsCut", 25.0);  // [cm]
-    desc.add<double>("tAbsCut", 0.15);  // [ns]
+    desc.add<double>("zAbsCut", 25.0);
+    desc.add<double>("tAbsCut", 0.15);
     desc.add<double>("sigmaZ", 12.5);
     desc.add<double>("sigmaT", 0.08);
     desc.add<double>("sigmaDR", 0.08);
     desc.add<double>("zPower", 1.5);
     desc.add<double>("tPower", 0.5);
     desc.add<double>("drPower", 0.5);
+    desc.add<double>("wmin", 1e-3);
   }
 
 private:
-  // β = log( Ek * sum_ij ΔR_ij * Θ(ΔR_ij ≤ R0) )
   double betaContamMin_, R0_, epsE_, epsDR_;
   bool   useRawEnergy_, emitDroppedAsStandalone_;
-
-  // pruning / weighting
-  std::string mode_;
+  bool   weightMode_;
   double zAbsCut_, tAbsCut_;
   double sigmaZ_, sigmaT_, sigmaDR_;
   double zPower_, tPower_, drPower_;
+  double wmin_;
 
   // helpers
-  inline float linkEnergy_(const ticl::Trackster& trackster) const {
-    return useRawEnergy_ ? trackster.raw_energy() : trackster.regressed_energy();
+  inline double linkEnergy_(const ticl::Trackster& trk) const {
+    return useRawEnergy_ ? trk.raw_energy() : trk.regressed_energy();
   }
-  inline void setLinkRawEnergy_(ticl::Trackster& trackster, float e) const {
-    trackster.setRawEnergy(e);
+  inline void setLinkRawEnergy_(ticl::Trackster& trk, double e) const {
+    trk.setRawEnergy(static_cast<float>(e));
   }
 };
 
