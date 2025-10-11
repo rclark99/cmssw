@@ -66,7 +66,6 @@ TracksterCleaningProducer::TracksterCleaningProducer(const edm::ParameterSet& ps
   labelMapOut_     = ps.getParameter<std::string>("labelMapOut");
   labelWeightsOut_ = ps.getParameter<std::string>("labelWeightsOut");
 
-  // plugin
   const auto& cleanerPSet = ps.getParameter<edm::ParameterSet>("cleaner");
   const auto pluginName   = cleanerPSet.getParameter<std::string>("type");
   cleaningAlgo_ = std::unique_ptr<TracksterCleaningAlgoBase>(
@@ -114,7 +113,6 @@ void TracksterCleaningProducer::fillDescriptions(edm::ConfigurationDescriptions&
   TracksterCleaningByBeta::fillPSetDescription(cleanerDesc);
   desc.add<edm::ParameterSetDescription>("cleaner", cleanerDesc);
 
-  // stabilize the auto-cfi filename and content
   descriptions.addWithDefaultLabel(desc);
 }
 

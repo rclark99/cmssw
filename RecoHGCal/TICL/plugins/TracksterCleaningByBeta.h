@@ -47,7 +47,6 @@ private:
   double zPower_, tPower_, drPower_;
   double wmin_;
 
-  // helpers
   inline double linkEnergy_(const ticl::Trackster& trk) const {
     return useRawEnergy_ ? trk.raw_energy() : trk.regressed_energy();
   }
