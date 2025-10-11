@@ -1,5 +1,5 @@
-#ifndef RecoHGCal_TICL_TracksterCleaningPluginFactory_h
-#define RecoHGCal_TICL_TracksterCleaningPluginFactory_h
+#ifndef RecoHGCal_TICL_TracksterCleaningPluginFactory_H
+#define RecoHGCal_TICL_TracksterCleaningPluginFactory_H
 
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
