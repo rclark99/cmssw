@@ -205,7 +205,7 @@ ticlIterLabels_v5 = ["ticlTrackstersCLUE3DHigh", "ticlTracksterLinks", "ticlCand
 '''
 
 ticlTracksterMergeTask = cms.Task(ticlTrackstersMerge)
-ticlTracksterLinksTask = cms.Task(ticlTracksterLinksPre, ticlTracksterLinksPre, ticlSuperclusteringTask) 
+ticlTracksterLinksTask = cms.Task(ticlTracksterLinksPre, ticlTracksterLinks, ticlSuperclusteringTask) 
 
 
 mergeTICLTask = cms.Task(ticlLayerTileTask
