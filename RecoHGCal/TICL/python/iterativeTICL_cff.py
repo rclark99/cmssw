@@ -18,6 +18,7 @@ from RecoHGCal.TICL.tracksterSelectionTf_cfi import *
 
 from RecoHGCal.TICL.tracksterLinksProducer_cfi import tracksterLinksProducer as _tracksterLinksProducer
 from RecoHGCal.TICL.superclustering_cff import *
+from RecoHGCal.TICL.TracksterCleaningProducer_cfi import tracksterCleaningProducer as _tracksterCleaningProducer
 from RecoHGCal.TICL.ticlCandidateProducer_cfi import ticlCandidateProducer as _ticlCandidateProducer
 
 from RecoHGCal.TICL.mtdSoAProducer_cfi import mtdSoAProducer as _mtdSoAProducer
@@ -30,7 +31,7 @@ from Configuration.ProcessModifiers.ticl_superclustering_mustache_ticl_cff impor
 ticlLayerTileTask = cms.Task(ticlLayerTileProducer)
 
 ticlTrackstersMerge = _trackstersMergeProducer.clone()
-ticlTracksterLinks = _tracksterLinksProducer.clone(
+ticlTracksterLinksPre = _tracksterLinksProducer.clone(
     tracksters_collections = cms.VInputTag(
         'ticlTrackstersCLUE3DHigh',
         'ticlTrackstersRecovery'
@@ -116,6 +117,38 @@ ticlTracksterLinks = _tracksterLinksProducer.clone(
     )
 )
 
+
+ticlTracksterLinks = _tracksterCleaningProducer.clone(
+    linkedTracksters       = cms.InputTag('ticlTracksterLinksPre'),
+    clue3DTracksters       = cms.InputTag('ticlTrackstersCLUE3DHigh'),
+    clue3DInLinkedIndices  = cms.InputTag('ticlTracksterLinksPre','linkedTracksterIdToInputTracksterId'),
+
+    labelLinkedOut  = cms.string(''),
+    labelMapOut     = cms.string(''),
+    labelWeightsOut = cms.string('cleanedLinkedTracksterWeights'),
+
+    cleaner = cms.PSet(
+      type = cms.string('Beta'),
+      algo_verbosity = cms.int32(0),
+      betaContamMin = cms.double(1.12), # based on ROC curve study
+      R0 = cms.double(0.1),
+      useRawEnergy = cms.bool(True),
+      epsE = cms.double(1e-06),
+      epsDR = cms.double(1e-06),
+      weightMode = cms.bool(True),
+      emitDroppedAsStandalone = cms.bool(False),
+      zAbsCut = cms.double(25.0), # based on offline studies
+      tAbsCut = cms.double(0.15), # should be modified and performance checked
+      sigmaZ = cms.double(12.5), 
+      sigmaT = cms.double(0.08),
+      sigmaDR = cms.double(0.08),
+      zPower = cms.double(1.5),
+      tPower = cms.double(0.5),
+      drPower = cms.double(0.5),
+      wmin = cms.double(0.001)
+    )
+)
+
 ticlCandidate = _ticlCandidateProducer.clone(
     inferenceAlgo=cms.string('TracksterInferenceByPFN'),
     regressionAndPid = cms.bool(True),
@@ -172,7 +205,7 @@ ticlIterLabels_v5 = ["ticlTrackstersCLUE3DHigh", "ticlTracksterLinks", "ticlCand
 '''
 
 ticlTracksterMergeTask = cms.Task(ticlTrackstersMerge)
-ticlTracksterLinksTask = cms.Task(ticlTracksterLinks, ticlSuperclusteringTask) 
+ticlTracksterLinksTask = cms.Task(ticlTracksterLinksPre, ticlTracksterLinksPre, ticlSuperclusteringTask) 
 
 
 mergeTICLTask = cms.Task(ticlLayerTileTask
