@@ -48,13 +48,11 @@ TracksterCleaningByBeta::TracksterCleaningByBeta(const edm::ParameterSet& conf, 
 
 void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
                                               std::vector<ticl::Trackster>& outTracksters,
-                                              std::vector<std::vector<unsigned int>>& outMap,
-                                              std::vector<std::vector<float>>& outWeights) const {
+                                              std::vector<std::vector<unsigned int>>& outMap) const {
   const size_t nL = in.linked.size();
-  outTracksters.clear(); outMap.clear(); outWeights.clear();
+  outTracksters.clear(); outMap.clear();
   outTracksters.reserve(nL);
   outMap.reserve(nL * (emitDroppedAsStandalone_ ? 2 : 1));
-  outWeights.reserve(outMap.capacity());
 
   for (size_t L = 0; L < nL; ++L) {
     const auto& link    = in.linked[L];
@@ -93,7 +91,6 @@ void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
 
       outTracksters.emplace_back(std::move(cleaned));
       outMap.emplace_back(std::move(kept));
-      outWeights.emplace_back(std::move(keptW));
       continue;
     }
 
@@ -156,7 +153,6 @@ void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
 
     outTracksters.emplace_back(std::move(cleaned));
     outMap.emplace_back(std::move(kept));
-    outWeights.emplace_back(std::move(keptW));
 
     if (emitDroppedAsStandalone_ && !dropped.empty()) {
       ticl::Trackster droppedLink = link;
@@ -176,7 +172,6 @@ void TracksterCleaningByBeta::cleanTracksters(const Inputs& in,
 
       outTracksters.emplace_back(std::move(droppedLink));
       outMap.emplace_back(std::move(dropped));
-      outWeights.emplace_back(std::move(droppedW));
     }
   }
 }

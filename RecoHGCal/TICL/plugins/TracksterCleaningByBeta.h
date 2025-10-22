@@ -12,8 +12,7 @@ public:
 
   void cleanTracksters(const Inputs& input,
                        std::vector<ticl::Trackster>& outTracksters,
-                       std::vector<std::vector<unsigned int>>& outMap,
-                       std::vector<std::vector<float>>& outWeights) const override;
+                       std::vector<std::vector<unsigned int>>& outMap) const override;
 
   void initialize() override {}
   void setEvent(edm::Event&, edm::EventSetup const&) override {}

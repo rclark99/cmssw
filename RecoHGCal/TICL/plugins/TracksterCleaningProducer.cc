@@ -46,7 +46,6 @@ private:
   // output instance labels
   std::string labelLinkedOut_;
   std::string labelMapOut_;
-  std::string labelWeightsOut_;
 };
 
 TracksterCleaningProducer::TracksterCleaningProducer(const edm::ParameterSet& ps) {
@@ -64,7 +63,6 @@ TracksterCleaningProducer::TracksterCleaningProducer(const edm::ParameterSet& ps
   // outputs
   labelLinkedOut_  = ps.getParameter<std::string>("labelLinkedOut");
   labelMapOut_     = ps.getParameter<std::string>("labelMapOut");
-  labelWeightsOut_ = ps.getParameter<std::string>("labelWeightsOut");
 
   const auto& cleanerPSet = ps.getParameter<edm::ParameterSet>("cleaner");
   const auto pluginName   = cleanerPSet.getParameter<std::string>("type");
@@ -74,7 +72,6 @@ TracksterCleaningProducer::TracksterCleaningProducer(const edm::ParameterSet& ps
   // products
   produces<std::vector<Trackster>>(labelLinkedOut_);
   produces<std::vector<std::vector<unsigned int>>>(labelMapOut_);
-  produces<std::vector<std::vector<float>>>(labelWeightsOut_);
 }
 
 void TracksterCleaningProducer::produce(edm::Event& ev, const edm::EventSetup& es) {
@@ -84,14 +81,12 @@ void TracksterCleaningProducer::produce(edm::Event& ev, const edm::EventSetup& e
 
   auto outLinked  = std::make_unique<std::vector<Trackster>>();
   auto outMap     = std::make_unique<std::vector<std::vector<unsigned int>>>();
-  auto outWeights = std::make_unique<std::vector<std::vector<float>>>();
 
   TracksterCleaningAlgoBase::Inputs in(ev, es, linked, clue3d, mapIn);
-  cleaningAlgo_->cleanTracksters(in, *outLinked, *outMap, *outWeights);
+  cleaningAlgo_->cleanTracksters(in, *outLinked, *outMap);
 
   ev.put(std::move(outLinked),  labelLinkedOut_);
   ev.put(std::move(outMap),     labelMapOut_);
-  ev.put(std::move(outWeights), labelWeightsOut_);
 }
 
 void TracksterCleaningProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
@@ -106,7 +101,6 @@ void TracksterCleaningProducer::fillDescriptions(edm::ConfigurationDescriptions&
   desc.add<int>("algo_verbosity", 0);
   desc.add<std::string>("labelLinkedOut",  "cleanedLinkedTracksters");
   desc.add<std::string>("labelMapOut",     "cleanedLinkedTrackstersToInputTrackstersId");
-  desc.add<std::string>("labelWeightsOut", "cleanedLinkedTracksterWeights");
 
   edm::ParameterSetDescription cleanerDesc;
   cleanerDesc.add<std::string>("type", "Beta");

@@ -33,8 +33,7 @@ public:
 
   virtual void cleanTracksters(const Inputs& input,
                                std::vector<ticl::Trackster>& outTracksters,
-                               std::vector<std::vector<unsigned int>>& outMap,
-                               std::vector<std::vector<float>>& outWeights) const = 0;
+                               std::vector<std::vector<unsigned int>>& outMap) const = 0;
 
   virtual void initialize() {}
   virtual void setEvent(edm::Event&, edm::EventSetup const&) {}

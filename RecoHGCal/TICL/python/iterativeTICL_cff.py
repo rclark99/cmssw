@@ -9,7 +9,7 @@ from RecoHGCal.TICL.EMStep_cff import *
 from RecoHGCal.TICL.HADStep_cff import *
 from RecoHGCal.TICL.CLUE3DEM_cff import *
 from RecoHGCal.TICL.CLUE3DHAD_cff import *
-from RecoHGCal.TICL.PRbyRecovery_cff import *
+# from RecoHGCal.TICL.PRbyRecovery_cff import *
 
 from RecoHGCal.TICL.ticlLayerTileProducer_cfi import ticlLayerTileProducer
 from RecoHGCal.TICL.pfTICLProducer_cfi import pfTICLProducer as _pfTICLProducer
@@ -18,7 +18,7 @@ from RecoHGCal.TICL.tracksterSelectionTf_cfi import *
 
 from RecoHGCal.TICL.tracksterLinksProducer_cfi import tracksterLinksProducer as _tracksterLinksProducer
 from RecoHGCal.TICL.superclustering_cff import *
-from RecoHGCal.TICL.TracksterCleaningProducer_cfi import tracksterCleaningProducer as _tracksterCleaningProducer
+from RecoHGCal.TICL.tracksterCleaningProducer_cfi import tracksterCleaningProducer as _tracksterCleaningProducer
 from RecoHGCal.TICL.ticlCandidateProducer_cfi import ticlCandidateProducer as _ticlCandidateProducer
 
 from RecoHGCal.TICL.mtdSoAProducer_cfi import mtdSoAProducer as _mtdSoAProducer
@@ -33,8 +33,7 @@ ticlLayerTileTask = cms.Task(ticlLayerTileProducer)
 ticlTrackstersMerge = _trackstersMergeProducer.clone()
 ticlTracksterLinksPre = _tracksterLinksProducer.clone(
     tracksters_collections = cms.VInputTag(
-        'ticlTrackstersCLUE3DHigh',
-        'ticlTrackstersRecovery'
+        'ticlTrackstersCLUE3DHigh'
     ),
     linkingPSet = cms.PSet(
       cylinder_radius_sqr_split = cms.double(9),
@@ -117,15 +116,13 @@ ticlTracksterLinksPre = _tracksterLinksProducer.clone(
     )
 )
 
-
 ticlTracksterLinks = _tracksterCleaningProducer.clone(
     linkedTracksters       = cms.InputTag('ticlTracksterLinksPre'),
     clue3DTracksters       = cms.InputTag('ticlTrackstersCLUE3DHigh'),
-    clue3DInLinkedIndices  = cms.InputTag('ticlTracksterLinksPre','linkedTracksterIdToInputTracksterId'),
+    clue3DInLinkedIndices = cms.InputTag('ticlTracksterLinksPre', 'linkedTracksterIdToInputTracksterIdPre'),
 
     labelLinkedOut  = cms.string(''),
-    labelMapOut     = cms.string(''),
-    labelWeightsOut = cms.string('cleanedLinkedTracksterWeights'),
+    labelMapOut     = cms.string('linkedTracksterIdToInputTracksterId'),
 
     cleaner = cms.PSet(
       type = cms.string('Beta'),
@@ -152,6 +149,8 @@ ticlTracksterLinks = _tracksterCleaningProducer.clone(
 ticlCandidate = _ticlCandidateProducer.clone(
     inferenceAlgo=cms.string('TracksterInferenceByPFN'),
     regressionAndPid = cms.bool(True),
+    general_tracksters_collections = cms.VInputTag('ticlTrackstersCLUE3DHigh'),
+    general_tracksterlinks_collections = cms.VInputTag(cms.InputTag('ticlTracksterLinks','linkedTracksterIdToInputTracksterId')),
     pluginInferenceAlgoTracksterInferenceByPFN=cms.PSet(
         algo_verbosity=cms.int32(0),
         onnxPIDModelPath=cms.FileInPath(
@@ -184,7 +183,7 @@ ticlIterationsTask = cms.Task(
     ticlCLUE3DHighStepTask
 )
 
-ticl_v5.toModify(ticlIterationsTask , func=lambda x : x.add(ticlRecoveryStepTask))
+# ticl_v5.toModify(ticlIterationsTask , func=lambda x : x.add(ticlRecoveryStepTask))
 ''' For future separate iterations
 ,ticlCLUE3DEMStepTask,
 ,ticlCLUE3DHADStepTask
