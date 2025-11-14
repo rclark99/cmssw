@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <variant>
+#include <unordered_map>
+#include <cassert>
 
 #include <memory>  // unique_ptr
 #include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
@@ -622,6 +624,7 @@ private:
   const edm::EDGetTokenT<edm::ValueMap<std::pair<float, float>>> clustersTime_token_;
   const edm::EDGetTokenT<std::vector<int>> tracksterSeeds_token_;
   edm::EDGetTokenT<std::vector<std::vector<unsigned int>>> linkedTracksterIdToInputTracksterId_token;
+  edm::EDGetTokenT<std::vector<std::vector<unsigned int>>> pre_linkedTracksterIdToInputTracksterId_token;
   edm::EDGetTokenT<std::vector<std::vector<unsigned int>>> superclustering_linkedResultTracksters_token;
   edm::EDGetTokenT<reco::SuperClusterCollection> recoSuperClusters_token;
   edm::EDGetTokenT<reco::CaloClusterCollection> recoSuperClusters_caloClusters_token;
@@ -781,6 +784,7 @@ void TICLDumper::clearVariables() {
     tsDumper.clearVariables();
   }
 
+  linkedTracksterIdToInputTracksterId.clear();
   superclustering_linkedResultTracksters.clear();
 
   recoSuperCluster_rawEnergy.clear();
@@ -898,6 +902,8 @@ TICLDumper::TICLDumper(const edm::ParameterSet& ps)
           consumes<edm::ValueMap<std::pair<float, float>>>(ps.getParameter<edm::InputTag>("layer_clustersTime"))),
       linkedTracksterIdToInputTracksterId_token(
             consumes<std::vector<std::vector<unsigned int>>>(ps.getParameter<edm::InputTag>("linkedTracksterID"))),
+      pre_linkedTracksterIdToInputTracksterId_token(
+            consumes<std::vector<std::vector<unsigned int>>>(ps.getParameter<edm::InputTag>("preLinkedTracksterID"))),
       superclustering_linkedResultTracksters_token(
           consumes<std::vector<std::vector<unsigned int>>>(ps.getParameter<edm::InputTag>("superclustering"))),
       recoSuperClusters_token(
@@ -982,9 +988,10 @@ void TICLDumper::beginJob() {
     tracksters_trees.push_back(tree);
     tracksters_dumperHelpers_[i].initTree(tree, &eventId_);
 
-    if (tracksterPset.getParameter<edm::InputTag>("inputTag").label() == "ticlTracksterLinks") {
+    if (tracksterPset.getParameter<edm::InputTag>("inputTag").label() == "ticlTracksterLinks" ||
+    tracksterPset.getParameter<edm::InputTag>("inputTag").label() == "ticlTracksterLinksPre") {
       tree->Branch("linkedTracksterIdToInputTracksterId",
-                   &linkedTracksterIdToInputTracksterId);
+                  &linkedTracksterIdToInputTracksterId);
     }
   }
   if (saveLCs_) {
@@ -1161,8 +1168,6 @@ void TICLDumper::analyze(const edm::Event& event, const edm::EventSetup& setup) 
   edm::Handle<edm::ValueMap<GlobalPoint>> trackPosMtd_h;
   event.getByToken(tracks_pos_mtd_token_, trackPosMtd_h);
   const auto& trackPosMtd = *trackPosMtd_h;
-
-  linkedTracksterIdToInputTracksterId = event.get(linkedTracksterIdToInputTracksterId_token);
   
 
   // superclustering
@@ -1236,6 +1241,11 @@ void TICLDumper::analyze(const edm::Event& event, const edm::EventSetup& setup) 
     if (tracksters_parameterSets_[i].getParameter<edm::InputTag>("inputTag").label() == "ticlTracksterLinks") {
       linkedTracksterIdToInputTracksterId =
           event.get(linkedTracksterIdToInputTracksterId_token);
+    }
+
+    if (tracksters_parameterSets_[i].getParameter<edm::InputTag>("inputTag").label() == "ticlTracksterLinksPre") {
+      linkedTracksterIdToInputTracksterId =
+          event.get(pre_linkedTracksterIdToInputTracksterId_token);
     }
     
     tracksters_trees[i]->Fill();
@@ -1460,6 +1470,7 @@ void TICLDumper::fillDescriptions(edm::ConfigurationDescriptions& descriptions) 
   desc.add<edm::InputTag>("tracksPosMtd", edm::InputTag("trackExtenderWithMTD:generalTrackmtdpos"));
   desc.add<edm::InputTag>("muons", edm::InputTag("muons1stStep"));
   desc.add<edm::InputTag>("linkedTracksterID", edm::InputTag("ticlTracksterLinks", "linkedTracksterIdToInputTracksterId"));
+  desc.add<edm::InputTag>("preLinkedTracksterID", edm::InputTag("ticlTracksterLinksPre", "linkedTracksterIdToInputTracksterId"));
   desc.add<edm::InputTag>("superclustering", edm::InputTag("ticlTracksterLinksSuperclusteringDNN"));
   desc.add<edm::InputTag>("recoSuperClusters", edm::InputTag("particleFlowSuperClusterHGCal"))
       ->setComment(

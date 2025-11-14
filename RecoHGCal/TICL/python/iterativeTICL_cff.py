@@ -9,7 +9,7 @@ from RecoHGCal.TICL.EMStep_cff import *
 from RecoHGCal.TICL.HADStep_cff import *
 from RecoHGCal.TICL.CLUE3DEM_cff import *
 from RecoHGCal.TICL.CLUE3DHAD_cff import *
-# from RecoHGCal.TICL.PRbyRecovery_cff import *
+from RecoHGCal.TICL.PRbyRecovery_cff import *
 
 from RecoHGCal.TICL.ticlLayerTileProducer_cfi import ticlLayerTileProducer
 from RecoHGCal.TICL.pfTICLProducer_cfi import pfTICLProducer as _pfTICLProducer
@@ -119,7 +119,7 @@ ticlTracksterLinksPre = _tracksterLinksProducer.clone(
 ticlTracksterLinks = _tracksterCleaningProducer.clone(
     linkedTracksters       = cms.InputTag('ticlTracksterLinksPre'),
     clue3DTracksters       = cms.InputTag('ticlTrackstersCLUE3DHigh'),
-    clue3DInLinkedIndices = cms.InputTag('ticlTracksterLinksPre', 'linkedTracksterIdToInputTracksterIdPre'),
+    clue3DInLinkedIndices = cms.InputTag('ticlTracksterLinksPre', 'linkedTracksterIdToInputTracksterId'),
 
     labelLinkedOut  = cms.string(''),
     labelMapOut     = cms.string('linkedTracksterIdToInputTracksterId'),
@@ -197,7 +197,7 @@ from Configuration.ProcessModifiers.fastJetTICL_cff import fastJetTICL
 fastJetTICL.toModify(ticlIterationsTask, func=lambda x : x.add(ticlFastJetStepTask))
 
 ticlIterLabels = ["ticlTrackstersCLUE3DHigh", "ticlTrackstersMerge"]
-ticlIterLabels_v5 = ["ticlTrackstersCLUE3DHigh", "ticlTracksterLinks", "ticlCandidate"]
+ticlIterLabels_v5 = ["ticlTrackstersCLUE3DHigh", "ticlTracksterLinksPre", "ticlTracksterLinks", "ticlCandidate"]
 
 ''' For future separate iterations
 "CLUE3DEM", "CLUE3DHAD",

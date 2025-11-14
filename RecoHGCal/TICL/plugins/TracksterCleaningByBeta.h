@@ -35,6 +35,17 @@ public:
     desc.add<double>("tPower", 0.5);
     desc.add<double>("drPower", 0.5);
     desc.add<double>("wmin", 1e-3);
+
+    desc.add<bool>("doPruning", true);      
+    desc.add<double>("pruneWmin", 1e-2);              
+    desc.add<bool>("pruneUseSeparateKernels", false);  
+    // separate pruning kernels (only used if pruneUseSeparateKernels = true)
+    desc.add<double>("sigmaZ_prune", 12.5);
+    desc.add<double>("sigmaT_prune", 0.08);
+    desc.add<double>("sigmaDR_prune", 0.08);
+    desc.add<double>("zPower_prune", 1.5);
+    desc.add<double>("tPower_prune", 0.5);
+    desc.add<double>("drPower_prune", 0.5);
   }
 
 private:
@@ -45,6 +56,16 @@ private:
   double sigmaZ_, sigmaT_, sigmaDR_;
   double zPower_, tPower_, drPower_;
   double wmin_;
+
+  // pruning
+  bool   doPruning_; 
+  double pruneWmin_;   
+  bool   pruneUseSeparateKernels_;
+
+  // optional separate pruning kernels (used iff pruneUseSeparateKernels_==true)
+  double sigmaZ_prune_, sigmaT_prune_, sigmaDR_prune_;
+  double zPower_prune_, tPower_prune_, drPower_prune_;
+
 
   inline double linkEnergy_(const ticl::Trackster& trk) const {
     return useRawEnergy_ ? trk.raw_energy() : trk.regressed_energy();
