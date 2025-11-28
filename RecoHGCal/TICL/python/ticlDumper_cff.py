@@ -29,11 +29,13 @@ for simTrackstersCollection in simTrackstersCollections:
 
 ticlDumper = ticlDumper_.clone(
     tracksterCollections=[
-        *[cms.PSet(treeName=cms.string(label), inputTag=cms.InputTag(label)) for label in ticlIterLabels],
+        *[cms.PSet(treeName=cms.string(label), inputTag=cms.InputTag(label))
+          for label in ticlIterLabels
+          if label not in ("ticlTracksterLinks", "ticlTracksterLinksPre")],
 
         cms.PSet(
             treeName=cms.string("ticlTracksterLinks"),
-            inputTag=cms.InputTag("ticlTracksterLinks"),
+            inputTag=cms.InputTag("ticlTracksterLinks", "cleanedLinkedTracksters"),
             tracksterType=cms.string("Trackster"),
         ),
         cms.PSet(
@@ -58,7 +60,8 @@ ticlDumper = ticlDumper_.clone(
 
     saveSuperclustering=cms.bool(False),
 
-    linkedTracksterID=cms.InputTag("ticlTracksterLinks", "linkedTracksterIdToInputTracksterId"),
+    # fix the instance label to match the producer output
+    linkedTracksterID=cms.InputTag("ticlTracksterLinks", "cleanedLinkedTracksterIdToInputTracksterId"),
     preLinkedTracksterID=cms.InputTag("ticlTracksterLinksPre", "linkedTracksterIdToInputTracksterId"),
     superclustering=cms.InputTag("ticlTracksterLinksSuperclusteringDNN"),
     simtrackstersSC=cms.InputTag("ticlSimTracksters"),
