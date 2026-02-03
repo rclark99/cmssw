@@ -578,6 +578,7 @@ void TracksterLinkingbySkeletons::linkTracksters(
     LogDebug("TracksterLinkingbySkeletons") << "\n";
     ++ic;
   }
+  linkedTracksterIdToInputTracksterId.resize(ic);
   LogDebug("TracksterLinkingbySkeletons") << "\n";
 
 }  // linkTracksters
