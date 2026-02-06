@@ -1,0 +1,116 @@
+mode: check_events
+outdir: images
+input: {file: nanoAOD_bpartonFix.root, tree: Events}
+truth: {eta_max: 2.5, dr_paired: 0.4}
+
+style:
+  labelsize: 18
+  ticksize: 14
+  legendsize: 14
+  cms: "CMS"
+  cms_label: "Preliminary"
+  com: 13.6
+  data: True
+
+hist:
+  - out: "mjj_truth_vs_best_flagged.png"
+    bins: {nbins: 60, xmin: 0, xmax: 400}
+    normalize: true
+    xlabel: "$m_{jj}$ [GeV]"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.90, s: "$H \\rightarrow bb$ \nPAIReD Jets \nEvents with max(Prob(bb)) jet $\\neq$ truth matched $H\\rightarrow bb$ jet", fontsize: 16}
+    selections:
+      - label: "Truth-matched $H\\rightarrow bb$"
+        variable: "mjj_true"
+        mask: ["flag_event"]
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}
+      - label: "Highest Prob(bb)"
+        variable: "mjj_best"
+        mask: ["flag_event"]
+        style: {linestyle: "--", linewidth: 4, color: "xkcd:dark pink"}
+  
+  - out: "dR_truth_vs_best_flagged.png"
+    bins: {nbins: 50, xmin: 0, xmax: 5}
+    normalize: true
+    xlabel: "$\\Delta R(j_{1}, j_{2})$"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.90, s: "$H \\rightarrow bb$ \nPAIReD Jets\nEvents with max(Prob(bb)) jet $\\neq$ truth matched $H\\rightarrow bb$ jet", fontsize: 16}
+    selections:
+      - label: "Truth-matched $H\\rightarrow bb$"
+        variable: "dR_true"
+        mask: ["flag_event"]
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}
+      - label: "Highest Prob(bb)"
+        variable: "dR_best"
+        mask: ["flag_event"]
+        style: {linestyle: "--", linewidth: 4, color: "xkcd:dark pink"}
+
+  - out: "n_bParton_truth_vs_best_flagged.png"
+    bins: {nbins: 10, xmin: 0.5, xmax: 10.5}
+    normalize: true
+    xlabel: "$N_b$"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.90, s: "$H \\rightarrow bb$ \nPAIReD Jets\nEvents with max(Prob(bb)) jet $\\neq$ truth matched $H\\rightarrow bb$ jet", fontsize: 16}
+    selections:
+      - label: "Truth-matched $H\\rightarrow bb$"
+        variable: "nb_true"
+        mask: ["flag_event"]
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}
+      - label: "Highest Prob(bb)"
+        variable: "nb_best"
+        mask: ["flag_event"]
+        style: {linestyle: "--", linewidth: 4, color: "xkcd:dark pink"}
+
+  - out: "genPart_n_bparton_perEvent.png"
+    bins: {nbins: 10, xmin: 0.5, xmax: 10.5}
+    normalize: False
+    xlabel: "$N_b$"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.90, s: "$H \\rightarrow bb$ \nGenPart isLastCopy b quarks in event", fontsize: 16}
+    selections:
+      - variable: "n_bparton_event"
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}
+
+  # in bins of Njets
+  - out: "mjj_best_by_nPaired.png"
+    bins: {nbins: 60, xmin: 0, xmax: 400}
+    normalize: true
+    xlabel: "$m_{jj}$ [GeV]"
+    ylabel: "a.u."
+    selections:
+      - label: "$N=1$"
+        variable: "mjj_best"
+        mask: ["has_best", "nPAIReDJets == 1"]
+      - label: "$N=2$"
+        variable: "mjj_best"
+        mask: ["has_best", "nPAIReDJets == 2"]
+      - label: "$N=3$"
+        variable: "mjj_best"
+        mask: ["has_best", "nPAIReDJets == 3"]
+      - label: "$N\\geq4$"
+        variable: "mjj_best"
+        mask: ["has_best", "nPAIReDJets >= 4"]
+
+  - out: "dR_best_by_nPaired.png"
+    bins: {nbins: 50, xmin: 0, xmax: 5}
+    normalize: true
+    xlabel: "$\\Delta R(j_1,j_2)$"
+    ylabel: "a.u."
+    selections:
+      - label: "$N=1$"
+        variable: "dR_best"
+        mask: ["has_best", "nPAIReDJets == 1"]
+      - label: "$N=2$"
+        variable: "dR_best"
+        mask: ["has_best", "nPAIReDJets == 2"]
+      - label: "$N=3$"
+        variable: "dR_best"
+        mask: ["has_best", "nPAIReDJets == 3"]
+      - label: "$N\\geq4$"
+        variable: "dR_best"
+        mask: ["has_best", "nPAIReDJets >= 4"]
+

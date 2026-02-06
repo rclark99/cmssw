@@ -1,0 +1,45 @@
+mode: eff
+outdir: images
+
+input: {file: nanoAOD.root, tree: Events}
+
+truth: {eta_max: 2.5, dr_resolved: 0.4, dr_merged: 0.8, dr_paired: 0.4}
+
+binning: {log: false, xmin: 10, xmax: 1000, nbins: 20}
+
+selections:
+  base_event: ["genH_pt > 0"]
+
+categories:
+  resolved_truth:
+    label: "Resolved: 2 AK4 jets"
+    style: {marker: "o", linestyle: "-", color: "xkcd:pine"}
+    mask: ["resolved_truth"]
+  merged_truth:
+    label: "Merged: 1 AK8 jet"
+    style: {marker: "s", linestyle: "--", color: "xkcd:dark pink"}
+    mask: ["merged_truth"]
+
+style:
+  cms: "CMS"
+  cms_label: "Preliminary"
+  com: 13.6
+  data: false
+  labelsize: 18
+  ticksize: 14
+  legendsize: 14
+
+plot:
+  xlabel: "$p_T(H)$ [GeV]"
+  ylabel: "Reconstruction efficiency"
+  ylim: [0.0, 1.5]
+  logx: false
+  out: "eff_vs_genHpt.png"
+  text:
+    - {x: 0.07, y: 0.83, s: "$H \\rightarrow bb$", fontsize: 20}
+  background:
+    show: true
+    density: false
+    alpha: 0.18
+    color: "0.5"
+    ylabel: "Events"

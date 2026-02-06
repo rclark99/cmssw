@@ -1,0 +1,86 @@
+mode: hist
+outdir: images
+
+input:
+  file: nanoAOD_bpartonFix.root
+  tree: Events
+
+truth:
+  eta_max: 2.5
+  dr_paired: 0.4
+
+style:
+  cms_label: "Preliminary" 
+  com: 13.6
+  data: True
+
+hist:
+  - out: "paired_bb_score_truth_vs_other.png"
+    variable: "PAIReDJets_bb_score"
+    bins: {nbins: 50, xmin: 0.0, xmax: 1.0}
+    normalize: true
+    xlabel: "Prob(bb)"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.88, s: "$H \\rightarrow bb$ \nPAIReD Jets", fontsize: 20}
+    selections:
+      - label: "Truth H→bb"
+        mask: ["paired_is_hbb"]
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:blood red"}
+      - label: "Non-H"
+        mask: ["~paired_is_hbb"]
+        style: {linestyle: "--", linewidth: 4, color: "xkcd:dark sky blue"}
+
+  - out: "paired_ll_score_truth_vs_other.png"
+    variable: "PAIReDJets_ll_score"
+    bins: {nbins: 50, xmin: 0.0, xmax: 1.0}
+    normalize: true
+    xlabel: "Prob(ll)"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.88, s: "$H \\rightarrow bb$ \nPAIReD Jets", fontsize: 20}
+    selections:
+      - label: "Truth H→bb"
+        mask: ["paired_is_hbb"]
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}
+      - label: "Non-H"
+        mask: ["~paired_is_hbb"]
+        style: {linestyle: "--", linewidth: 4, color: "xkcd:dark pink"}
+
+  - out: "paired_bbVsll_score_truth_vs_other.png"
+    variable: "PAIReDJets_BBvsLL_score"
+    bins: {nbins: 50, xmin: 0.0, xmax: 1.0}
+    normalize: true
+    xlabel: "Prob(BBvsLL)"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.88, s: "$H \\rightarrow bb$ \nPAIReD Jets", fontsize: 20}
+    selections:
+      - label: "Truth H→bb"
+        mask: ["paired_is_hbb"]
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}
+      - label: "Non-H"
+        mask: ["~paired_is_hbb"]
+        style: {linestyle: "--", linewidth: 4, color: "xkcd:dark pink"}
+
+  - out: "nPAIReDJets.png"
+    variable: "nPAIReDJets"
+    bins: {nbins: 20, xmin: -0.5, xmax: 19.5}
+    normalize: false
+    xlabel: "N PAIReD jets"
+    ylabel: "Events"
+    text:
+      - {x: 0.07, y: 0.88, s: "$H \\rightarrow bb$ \nPAIReD Jets", fontsize: 20}
+    selections:
+      - style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}
+
+  - out: "n_bParton.png"
+    variable: "n_bparton"
+    bins: {nbins: 7, xmin: -0.5, xmax: 6.5}
+    normalize: false
+    xlabel: "$N_b$"
+    ylabel: "Events"
+    text:
+      - {x: 0.07, y: 0.88, s: "$H \\rightarrow bb$ \nPAIReD Jets", fontsize: 20}
+    selections:
+      - style: {linestyle: "-", linewidth: 4, color: "xkcd:pine"}

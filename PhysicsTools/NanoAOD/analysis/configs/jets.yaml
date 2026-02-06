@@ -1,0 +1,43 @@
+mode: check_events
+outdir: images
+
+input:
+  file: nanoAOD.root
+  tree: Events
+
+style:
+  cms_label: "Preliminary" 
+  com: 13.6
+  data: True
+
+hist:
+  - out: "best_pair_jet_pt.png"
+    bins: {nbins: 50, xmin: 0.0, xmax: 500}
+    normalize: true
+    xlabel: "$p_T$ [GeV]"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.88, s: "$H \\rightarrow bb$ \nHighest Prob(bb) PAIReD jet", fontsize: 20}
+
+    selections:
+      - label: "Jet 1"
+        variable: "best_jet1_pt"
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:blood red"}
+
+      - label: "Jet 2"
+        variable: "best_jet2_pt"
+        style: {linestyle: "--", linewidth: 4, color: "xkcd:dark sky blue"}
+
+hist: 
+  - out: "nJets.png"
+    bins: {nbins: 20, xmin: -0.5, xmax: 19.5}
+    normalize: false
+    xlabel: "$N_{jets}$"
+    ylabel: "a.u."
+    text:
+      - {x: 0.07, y: 0.88, s: "$H \\rightarrow bb$ \nInclusive", fontsize: 20}
+
+    selections:
+      # - label: "Jet 1"
+      - variable: "nJets"
+        style: {linestyle: "-", linewidth: 4, color: "xkcd:blood red"}

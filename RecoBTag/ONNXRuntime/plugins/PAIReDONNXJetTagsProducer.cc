@@ -534,25 +534,32 @@ void PAIReDONNXJetTagsProducer::make_inputs(edm::Event& iEvent,
 }
 
 int PAIReDONNXJetTagsProducer::get_n_parton(edm::Event& iEvent,
-                                            const edm::EventSetup& iSetup,
-                                            edm::Handle<edm::View<pat::Jet>> jets,
-                                            unsigned i_jet,
-                                            unsigned j_jet,
-                                            edm::Handle<edm::View<reco::GenParticle>> gen_particles,
-                                            int parton_id) {
+  const edm::EventSetup& iSetup,
+  edm::Handle<edm::View<pat::Jet>> jets,
+  unsigned i_jet,
+  unsigned j_jet,
+  edm::Handle<edm::View<reco::GenParticle>> gen_particles,
+  int parton_id) {
   const auto& jet1 = jets->at(i_jet);
   const auto& jet2 = jets->at(j_jet);
-  // using hadron ghost tagging as the truth information
+
   int n_parton = 0;
+
   for (unsigned i = 0; i < gen_particles->size(); ++i) {
     const auto* genp = &(gen_particles->at(i));
-    if (genp->isLastCopy() && inEllipse(jet1.eta(), jet1.phi(), jet2.eta(), jet2.phi(), (*genp).eta(), (*genp).phi())) {
-      if (parton_id == 4)
-        n_parton += Rivet::PID::hasCharm(genp->pdgId());
-      else if (parton_id == 5)
-        n_parton += Rivet::PID::hasBottom(genp->pdgId());
-    }
+
+    // only count partons
+    if (std::abs(genp->pdgId()) != parton_id) continue;
+
+    // last copy 
+    if (!genp->isLastCopy()) continue;
+
+    if (!inEllipse(jet1.eta(), jet1.phi(), jet2.eta(), jet2.phi(),genp->eta(), genp->phi()))
+    continue;
+
+    ++n_parton;
   }
+
   return n_parton;
 }
 
