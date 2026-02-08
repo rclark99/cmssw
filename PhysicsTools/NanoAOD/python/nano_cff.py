@@ -28,6 +28,7 @@ from PhysicsTools.NanoAOD.protons_cff import *
 from PhysicsTools.NanoAOD.NanoAODEDMEventContent_cff import *
 from PhysicsTools.NanoAOD.fsrPhotons_cff import *
 from PhysicsTools.NanoAOD.softActivity_cff import *
+from PhysicsTools.NanoAOD.jetsPAIReD import *
 
 nanoMetadata = cms.EDProducer("UniqueStringProducer",
     strings = cms.PSet(
@@ -60,7 +61,7 @@ nanoTableTaskCommon = cms.Task(
     vertexTask, isoTrackTask, jetAK8LepTask,  # must be after all the leptons
     softActivityTask,
     cms.Task(linkedObjects),
-    jetPuppiTablesTask, jetAK8TablesTask, jetConstituentsTablesTask,
+    jetPuppiTablesTask, jetAK8TablesTask, jetConstituentsTablesTask, pairedJetTableTask,
     muonTablesTask, fsrTablesTask, tauTablesTask, boostedTauTablesTask,
     electronTablesTask, lowPtElectronTablesTask, photonTablesTask,
     globalTablesTask, vertexTablesTask, metTablesTask, extraFlagsTableTask,
